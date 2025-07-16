@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'screens/home_screen.dart';
-
+const String foursquareApiKey = '';
 Future<void> main() async {
   // Load .env
-  await dotenv.load(fileName: ".env");
+  // await dotenv.load(fileName: ".env");
 
   runApp(const FusionCardsApp());
 }
