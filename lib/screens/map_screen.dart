@@ -7,6 +7,7 @@ import 'package:flutter_map/flutter_map.dart';
 
 import '../widgets/merchant_bottom_sheet.dart';
 import '../models/merchant.dart';
+import '../secrets.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -86,7 +87,7 @@ class _MapScreenState extends State<MapScreen> {
       'https://places-api.foursquare.com/places/search'
           '?ll=$latitude,$longitude'
           '&radius=1000'
-          '&fields=name,tel,location,categories,distance'
+          '&fields=name,tel,location,categories,distance,latitude,longitude'
           '&sort=DISTANCE'
           '&limit=10',
     );
@@ -95,7 +96,7 @@ class _MapScreenState extends State<MapScreen> {
       url,
       headers: {
         'Accept': 'application/json',
-        'Authorization': 'Bearer 1HPQH2PHIPCFX35FPQUJIP2ZO3TD1GINGXWT3TNJ5DRZ5JVQ',
+        'Authorization': SECRET_BEARER_KEY,
         'X-Places-Api-Version': '2025-06-17',
       },
     );
@@ -118,6 +119,8 @@ class _MapScreenState extends State<MapScreen> {
           address: location['formatted_address']?.toString().isNotEmpty == true
               ? location['formatted_address']
               : '${location['locality'] ?? ''}, ${location['region'] ?? ''}',
+          latitude: place['latitude']?.toDouble(),
+          longitude: place['longitude']?.toDouble(),
         );
       }).toList();
     } else {
@@ -154,12 +157,14 @@ class _MapScreenState extends State<MapScreen> {
                 markers: [
                   Marker(
                     point: _userLatLng!,
-                    builder: (ctx) => const Icon(
-                      Icons.my_location,
-                      color: Colors.blue,
-                      size: 36,
-                    ),
+                    builder: (_) => const Icon(Icons.my_location, color: Colors.blue, size: 40),
                   ),
+                  ..._merchants.where((m) => m.latitude != null && m.longitude != null).map((merchant) {
+                    return Marker(
+                      point: LatLng(merchant.latitude!, merchant.longitude!),
+                      builder: (_) => const Icon(Icons.location_pin, color: Colors.red, size: 36),
+                    );
+                  }).toList(),
                 ],
               ),
             ],
@@ -201,7 +206,13 @@ class _MapScreenState extends State<MapScreen> {
 
 
           // Bottom Sheet
-          MerchantBottomSheet(merchants: _merchants),
+          MerchantBottomSheet(
+            merchants: _merchants,
+            onTapPin: (lat, lng) {
+              _mapController.move(LatLng(lat, lng), 16);
+            },
+          ),
+
         ],
       ),
     );

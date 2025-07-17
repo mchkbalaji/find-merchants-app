@@ -18,6 +18,7 @@ class FusionCardsApp extends StatelessWidget {
       title: 'FusionCards Hackathon',
       theme: ThemeData(
         primarySwatch: Colors.red,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
         useMaterial3: true,
       ),
       home: const HomeScreen(),

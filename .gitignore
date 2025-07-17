@@ -1,5 +1,6 @@
 # Miscellaneous
 .env
+./lib/secrets.dart
 *.class
 *.log
 *.pyc
